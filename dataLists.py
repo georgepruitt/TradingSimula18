@@ -1,0 +1,8 @@
+myDate = list()  
+myTime = list()
+myOpen = list()
+myHigh = list()
+myLow = list()
+myClose = list()
+myVolume = list()
+myOpInt = list()

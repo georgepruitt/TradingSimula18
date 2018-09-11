@@ -6,7 +6,6 @@
 #Import Section - inlcude functions, classes, variables
 #from external modules
 #--------------------------------------------------------------------------------
-
 from getData import getData
 from equityDataClass import equityClass
 from tradeClass import tradeInfo
@@ -57,9 +56,11 @@ def bookTrade(entryOrExit,lOrS,price,date,tradeName,shares):
         if lOrS ==-1:
             mp -= 1
             trades = tradeInfo('sell',date,tradeName,entryPrice[-1],shares,1)
+
     return(profit,curShares,trades)
 
 dataClassList = list()
+
 
 def main():
     pass
@@ -86,7 +87,6 @@ if __name__ == '__main__':
     systemMarketList = list()
     portfolio = portfolioClass()
     numMarkets = len(marketList)
-
     for i in range(0,numMarkets):
         systemMarkTracker = systemMarkTrackerClass()
         equity = equityClass()
@@ -140,6 +140,7 @@ if __name__ == '__main__':
                 entryQuant= marketMonitorList[j].entryQuant
                 curShares = marketMonitorList[j].curShares
                 cumuProfit = marketMonitorList[j].cumuProfit
+
                 barsSinceEntry = marketMonitorList[j].barsSinceEntry
                 cumuProfit = marketMonitorList[j].cumuProfit
                 if k > 5:
@@ -154,6 +155,7 @@ if __name__ == '__main__':
                         profit,curShares,trades = bookTrade(1,1,price,myDate[k],tradeName,numShares)
                         barsSinceEntry = 1
                         marketMonitorList[j].setSysMarkTrackingInfo(tradeName,cumuProfit,mp,barsSinceEntry,curShares)
+
                         marketMonitorList[j].tradesList.append(trades)
                     if myLow[k] <= lowest(myLow,40,k,1) and barsSinceEntry > 1 and mp !=-1:
                         price = min(myOpen[k],lowest(myLow,40,k,1))
@@ -161,6 +163,8 @@ if __name__ == '__main__':
                             profit,curShares,trades = bookTrade(-1,0,price,myDate[k],"RevLongLiq",curShares)
                             marketMonitorList[j].tradesList.append(trades)
                             todaysCTE = profit
+
+
                         tradeName = "Test S"
                         numShares = 4
                         profit,curShares,trades = bookTrade(1,-1,price,myDate[k],tradeName,numShares)
