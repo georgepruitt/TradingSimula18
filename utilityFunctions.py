@@ -32,3 +32,23 @@ def calcTodaysOTE(mp,myClose,entryPrice,entryQuant,myBPV):
         if mp >= 1: todaysOTE += (myClose - entryPrice[entries])*myBPV*entryQuant[entries]
         if mp <= -1: todaysOTE += (entryPrice[entries] - myClose)*myBPV*entryQuant[entries]
     return(todaysOTE)
+
+def removeDuplicates(li):
+    my_set = set()
+    res = []
+    for e in li:
+        if e not in my_set:
+            res.append(e)
+            my_set.add(e)
+    return res
+
+def setDataLists(dClass):
+    d = dClass.date
+    o = dClass.open
+    h = dClass.high
+    l = dClass.low
+    c = dClass.close
+    v = dClass.volume
+    oi = dClass.opInt
+    return(d,o,h,l,c,v,oi)
+

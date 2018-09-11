@@ -6,71 +6,16 @@
 #Import Section - inlcude functions, classes, variables
 #from external modules
 #--------------------------------------------------------------------------------
-import csv
-#import numpy as np
-#from dataLists import myDate,myTime,myOpen,myHigh,myLow,myClose
-import tkinter as tk
-import os.path
 from getData import getData
-from marketDataClass import marketDataClass
-from dataMasterLists import commName, bigPtVal, minMove
-from tkinter.filedialog import askopenfilenames
 from equityDataClass import equityClass
-from trade import trade
 from tradeClass import tradeInfo
 from systemMarket import systemMarketClass
 from indicators import highest,lowest,rsiClass,stochClass,sAverage,bollingerBands
 from portfolio import portfolioClass
 from systemAnalytics import calcSystemResults
 from utilityFunctions import getDataAtribs,getDataLists,roundToNearestTick,calcTodaysOTE
-
-class portManagerClass(object):
-    def __init__(self):
-        self.portDate = list()
-        self.marketSymbols= list()
-        self.individEquity = list()
-        self.combinedEquity = list()
-        self.numConts = list()
-
-class systemMarkTrackerClass(object):
-    def __init__(self):
-        self.marketData = marketDataClass
-        self.entryPrice = list()
-        self.entryQuant = list()
-        self.exitQuant = list()
-        self.entryName =list()
-        self.mp = list()
-        self.curShares = 0
-        self.tradesList = list()
-        self.equity = equityClass
-        self.totProfit = 0
-        self.barsSinceEntry = 0
-        self.cumuProfit = 0
-        self.equItm = 0
-
-    def setSysMarkTrackingData(self,marketData):
-        self.marketData = marketData
-
-    def setSysMarkTrackingInfo(self,entryName,cumuProfit,mp,barsSinceEntry,curShares):
-#        self.entryPrice = entryPrice
-#        self.entryQuant = entryQuant
-        self.entryName.append(entryName)
-        self.mp.append(mp)
-        self.cumuProfit = cumuProfit
-        self.curShares = curShares
-
-    def setSysMarkTrackingEquity(self,equity):
-        self.equity = equity
-
-def setDataLists(dClass):
-    d = dClass.date
-    o = dClass.open
-    h = dClass.high
-    l = dClass.low
-    c = dClass.close
-    v = dClass.volume
-    oi = dClass.opInt
-    return(d,o,h,l,c,v,oi)
+from utilityFunctions import setDataLists,removeDuplicates
+from portManager import portManagerClass,systemMarkTrackerClass
 
 def exitPos(myExitPrice,myExitDate,tempName,myCurShares):
     global tradeName,entryPrice,entryQuant,exitPrice,numShares,myBPV,cumuProfit
@@ -98,7 +43,6 @@ def bookTrade(entryOrExit,lOrS,price,date,tradeName,shares):
     global entryPrice,entryQuant,exitPrice,numShares,myBPV,cumuProfit
     if entryOrExit == -1:
         profit,trades,curShares = exitPos(price,date,tradeName,shares)
-#        listOfTrades.append(trades)
         mp = 0
     else:
         profit = 0
@@ -108,25 +52,15 @@ def bookTrade(entryOrExit,lOrS,price,date,tradeName,shares):
         entryQuant.append(shares)
         if lOrS == 1:
             mp += 1
-#            marketPosition[i] = mp
             trades = tradeInfo('buy',date,tradeName,entryPrice[-1],shares,1)
         if lOrS ==-1:
             mp -= 1
-#            marketPosition[i] = mp
             trades = tradeInfo('sell',date,tradeName,entryPrice[-1],shares,1)
-#        listOfTrades.append(trades)
+
     return(profit,curShares,trades)
 
 dataClassList = list()
 
-def removeDuplicates(li):
-    my_set = set()
-    res = []
-    for e in li:
-        if e not in my_set:
-            res.append(e)
-            my_set.add(e)
-    return res
 
 def main():
     pass
@@ -137,9 +71,6 @@ if __name__ == '__main__':
     masterDateList = list()
     masterDateGlob = list()
     marketPosition = list()
-    masterDateGlob[:] = []
-    masterDateList[:] = []
-    marketPosition[:] = []
     entryPrice= list()
     entryQuant= list()
     exitQuant= list()
@@ -155,10 +86,6 @@ if __name__ == '__main__':
     commission = 50
     systemMarketList = list()
     portfolio = portfolioClass()
-
-    entryPrice,fileList,entryQuant,exitQuant = ([] for i in range(4))
-    marketPosition,listOfTrades,trueRanges,ranges = ([] for i in range(4))
-
     numMarkets = len(marketList)
     for i in range(0,numMarkets):
         systemMarkTracker = systemMarkTrackerClass()
@@ -211,29 +138,24 @@ if __name__ == '__main__':
                     mp = marketMonitorList[j].mp[-1]
                 entryPrice = marketMonitorList[j].entryPrice
                 entryQuant= marketMonitorList[j].entryQuant
- #              numShares = entryQuant
                 curShares = marketMonitorList[j].curShares
                 cumuProfit = marketMonitorList[j].cumuProfit
- #              cumuProfit = 50
+
                 barsSinceEntry = marketMonitorList[j].barsSinceEntry
                 cumuProfit = marketMonitorList[j].cumuProfit
                 if k > 5:
                     if myHigh[k] >= highest(myHigh,40,k,1) and mp !=1:
                         price = max(myOpen[k],highest(myHigh,40,k,1))
                         if mp <= -1:
-#                            profit,trades,curShares = exitPos(price,myDate[k],"RevShrtLiq",curShares)
                             profit,curShares,trades = bookTrade(-1,0,price,myDate[k],"RevshrtLiq",curShares)
                             marketMonitorList[j].tradesList.append(trades)
                             todaysCTE = profit
-#                            cumuProfit += profit
-#                        mp += 1
                         tradeName = "Test B"
                         numShares = 4
                         profit,curShares,trades = bookTrade(1,1,price,myDate[k],tradeName,numShares)
-#                        curShares = curShares + numShares
                         barsSinceEntry = 1
                         marketMonitorList[j].setSysMarkTrackingInfo(tradeName,cumuProfit,mp,barsSinceEntry,curShares)
-#                        trades = tradeInfo('buy',myDate[k],tradeName,marketMonitorList[j].entryPrice[-1],numShares,1)
+
                         marketMonitorList[j].tradesList.append(trades)
                     if myLow[k] <= lowest(myLow,40,k,1) and barsSinceEntry > 1 and mp !=-1:
                         price = min(myOpen[k],lowest(myLow,40,k,1))
@@ -241,14 +163,13 @@ if __name__ == '__main__':
                             profit,curShares,trades = bookTrade(-1,0,price,myDate[k],"RevLongLiq",curShares)
                             marketMonitorList[j].tradesList.append(trades)
                             todaysCTE = profit
-#                            cumuProfit += profit
-#                        mp -= 1
+
+
                         tradeName = "Test S"
                         numShares = 4
                         profit,curShares,trades = bookTrade(1,-1,price,myDate[k],tradeName,numShares)
                         barsSinceEntry = 1
                         marketMonitorList[j].setSysMarkTrackingInfo(tradeName,cumuProfit,mp,barsSinceEntry,curShares)
-#                        trades = tradeInfo('sell',marketList[j].date[k],tradeName,marketMonitorList[j].entryPrice[-1],numShares,1)
                         marketMonitorList[j].tradesList.append(trades)
                     if mp != 0 :
                         barsSinceEntry += 1
