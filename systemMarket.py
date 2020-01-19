@@ -1,104 +1,121 @@
-from equityDataClass import equityClass
-from math import sqrt
-
-class systemMarketClass(object):
-    def __init__(self):
-        self.systemName = ""
-        self.symbol = ""
-        self.tradesList =list()
-        self.equity = equityClass
-        self.avgWin = 0
-        self.avgLoss = 0
-        self.avgTrade = 0
-        self.profitLoss = 0
-        self.numTrades = 0
-        self.maxxDD = 0
-        self.clsTrdDD = 0
-        self.perWins = 0
-        self.initCapital =0
-        self.monthlyReturnTuple = list()
-        self.yearlyReturnTuple = list()
-        self.avgMonthlyReturn = 0
-        self.avgMonthlyStdDev = 0
-        self.avgYearlyReturn = 0
-    def setSysMarkInfo(self,sysName,symbol,trades,equity,initCapital):
-        self.systemName = sysName
-        self.symbol = symbol
-        self.tradesList = list(trades)
-        self.equity = equity
-        temp1 = 0
-        temp2 = 0
-        temp3 = 0
-        temp4 = 0
-        temp5 = 0
-        temp6 = 0
-        temp7 = 0
-        temp8 = 0
-        temp9 = 0
-        temp10 = 0
-        numTrades = 0
-        bomEquity = 0
-        boyEquity = 0
-        tempMonthlyRetList = list()
-        numEquityItems = len(self.equity.dailyEquityVal)
-        for i in range(0,numEquityItems):
-            tempEquityDate = self.equity.equityDate[i]
-            if i==0: bomEquity = 0
-            if i > 0:
-                monthDate =self.equity.equityDate[i]
-                monthYesDay = (int(self.equity.equityDate[i-1]/100) % 100)
-                monthToDay =(int(self.equity.equityDate[i]/100) % 100)
-                if monthYesDay != monthToDay:
-                    self.monthlyReturnTuple += ((self.equity.equityDate[i-1],self.equity.dailyEquityVal[i-1] - bomEquity),)
-                    bomEquity = self.equity.dailyEquityVal[i-1]
-                    isDecember = False
-                    whichMon = int(monthDate/100) % 100
-                    if  whichMon == 1 or i == numEquityItems-1:
-                        endOfYearDate = self.equity.equityDate[i-1]
-                        endOfYearEquityChg = self.equity.dailyEquityVal[i-1] - boyEquity
-                        self.yearlyReturnTuple += ((endOfYearDate,endOfYearEquityChg),)
-                        boyEquity = self.equity.dailyEquityVal[i-1]
-                if i == numEquityItems-1:
-                    self.monthlyReturnTuple += ((self.equity.equityDate[i],self.equity.dailyEquityVal[i] - bomEquity),)
-            temp5 = self.equity.dailyEquityVal[i]
-            temp6 = max(temp6,temp5)
-            temp7 = max(temp7,temp6-temp5)
-            self.maxxDD = temp7
-
-        tempMonthlyRetList = ([x[1] for x in self.monthlyReturnTuple])
-        tempYearlyRetList = ([x[1] for x in self.yearlyReturnTuple])
-        mean =sum(tempYearlyRetList) / len(tempYearlyRetList)
-        self.avgYearlyReturn = mean
-        mean = sum(tempMonthlyRetList) / len(tempMonthlyRetList)
-        differences = [x - mean for x in tempMonthlyRetList]
-        sq_differences = [d ** 2 for d in differences]
-        ssd = sum(sq_differences)
-        variance = ssd / ( len(tempMonthlyRetList) - 1)
-        sd = sqrt(variance)
-        self.avgMonthlyReturn = mean
-        self.avgMonthlyStdDev = sd
-        for i in range(0,len(self.tradesList)):
-            temp8 += self.tradesList[i].tradeProfit
-            temp9 = max(temp9,temp8)
-            temp10= max(temp10,temp9-temp8)
-            self.clsTrdDD = temp10
-            if self.tradesList[i].entryOrExit == 1:
-                numTrades += 1
-            if self.tradesList[i].tradeProfit > 0:
-                temp1 += self.tradesList[i].tradeProfit
-                temp2 += 1
-            if self.tradesList[i].tradeProfit < 0:
-                temp3 += self.tradesList[i].tradeProfit
-                temp4 += 1
-        if temp2 != 0: self.avgWin = temp1/temp2
-        if temp4 != 0: self.avgLoss = temp3/temp4
-        if numTrades != 0: self.avgTrade = temp5/numTrades
-        self.numTrades =numTrades
-        self.profitLoss = temp5
-        if numTrades != 0: self.perWins = temp2 / numTrades
-
-
-
-
-
-
+from equityDataClass import equityClass #line:1
+from math import sqrt #line:2
+class systemMarketClass (object ):#line:4
+    def __init__ (O0OOO0OOOO0OOOO0O ):#line:5
+        O0OOO0OOOO0OOOO0O .systemName =""#line:6
+        O0OOO0OOOO0OOOO0O .symbol =""#line:7
+        O0OOO0OOOO0OOOO0O .tradesList =list ()#line:8
+        O0OOO0OOOO0OOOO0O .equity =equityClass #line:9
+        O0OOO0OOOO0OOOO0O .avgWin =0 #line:10
+        O0OOO0OOOO0OOOO0O .avgLoss =0 #line:11
+        O0OOO0OOOO0OOOO0O .avgTrade =0 #line:12
+        O0OOO0OOOO0OOOO0O .profitLoss =0 #line:13
+        O0OOO0OOOO0OOOO0O .numTrades =0 #line:14
+        O0OOO0OOOO0OOOO0O .avgYearlyTrades =0 #line:15
+        O0OOO0OOOO0OOOO0O .maxxDD =0 #line:16
+        O0OOO0OOOO0OOOO0O .clsTrdDD =0 #line:17
+        O0OOO0OOOO0OOOO0O .perWins =0 #line:18
+        O0OOO0OOOO0OOOO0O .initCapital =0 #line:19
+        O0OOO0OOOO0OOOO0O .monthlyReturnTuple =list ()#line:20
+        O0OOO0OOOO0OOOO0O .yearlyReturnTuple =list ()#line:21
+        O0OOO0OOOO0OOOO0O .avgMonthlyReturn =0 #line:22
+        O0OOO0OOOO0OOOO0O .avgMonthlyStdDev =0 #line:23
+        O0OOO0OOOO0OOOO0O .avgYearlyReturn =0 #line:24
+        O0OOO0OOOO0OOOO0O .drawDownTuple =list ()#line:25
+        O0OOO0OOOO0OOOO0O .avgMaxDD =0 #line:26
+    def setSysMarkInfo (O000OOO00O0O000OO ,OO00O0O00O0OOO0O0 ,OO000OOOO00000OOO ,O000000000O0O00O0 ,O0OOO00OO0O0O0OOO ,O0OO00O0O0OOOOOO0 ):#line:27
+        O000OOO00O0O000OO .systemName =OO00O0O00O0OOO0O0 #line:28
+        O000OOO00O0O000OO .symbol =OO000OOOO00000OOO #line:29
+        O000OOO00O0O000OO .tradesList =list (O000000000O0O00O0 )#line:30
+        O000OOO00O0O000OO .equity =O0OOO00OO0O0O0OOO #line:31
+        O00000O0O00000OO0 =0 #line:32
+        O0OOO0000O00O000O =0 #line:33
+        OO0000OOOO0OOO000 =0 #line:34
+        O0O0OO0OOO0OO000O =0 #line:35
+        O00OO0OOOOO00OOO0 =0 #line:36
+        O0000OO0OO00O0OOO =0 #line:37
+        OOO0O000000O00OOO =0 #line:38
+        O0OO0OOO00000O0O0 =0 #line:39
+        O000000OO0OOOO00O =0 #line:40
+        O000000O0OOO00OOO =0 #line:41
+        O0O0O000000OO00O0 =0 #line:42
+        OO00OOO0O0O000OOO =0 #line:43
+        O000000O0OO000O0O =0 #line:44
+        OO0000OO00O000OOO =0 #line:45
+        OOOOO0OO0OOOOO00O =0 #line:46
+        OO000O0O000OOOOO0 =0 #line:47
+        O000O0OOO0OO000O0 =True #line:48
+        OOOOOO0O000O0000O =list ()#line:49
+        O0OOO00O0O0O00OOO =len (O000OOO00O0O000OO .equity .dailyEquityVal )#line:50
+        for OOO0O000000O0O00O in range (0 ,O0OOO00O0O0O00OOO ):#line:54
+            O0000O0O0OO0000OO =O000OOO00O0O000OO .equity .equityDate [OOO0O000000O0O00O ]#line:55
+            if OOO0O000000O0O00O ==0 :O000000O0OO000O0O =0 #line:56
+            if OOO0O000000O0O00O >0 :#line:57
+                O00O0O00O0O00OO00 =O000OOO00O0O000OO .equity .equityDate [OOO0O000000O0O00O ]#line:58
+                OOO00OO0O00OO00OO =(int (O000OOO00O0O000OO .equity .equityDate [OOO0O000000O0O00O -1 ]/100 )%100 )#line:59
+                O00OOOOO0O00OOOO0 =(int (O000OOO00O0O000OO .equity .equityDate [OOO0O000000O0O00O ]/100 )%100 )#line:60
+                if OOO00OO0O00OO00OO !=O00OOOOO0O00OOOO0 :#line:61
+                    O000OOO00O0O000OO .monthlyReturnTuple +=((O000OOO00O0O000OO .equity .equityDate [OOO0O000000O0O00O -1 ],O000OOO00O0O000OO .equity .dailyEquityVal [OOO0O000000O0O00O -1 ]-O000000O0OO000O0O ),)#line:62
+                    O000000O0OO000O0O =O000OOO00O0O000OO .equity .dailyEquityVal [OOO0O000000O0O00O -1 ]#line:63
+                    OOO0OO000OO0O0OO0 =False #line:64
+                    OOO0OO0OO000O000O =int (O00O0O00O0O00OO00 /100 )%100 #line:65
+                    if OOO0OO0OO000O000O ==1 or OOO0O000000O0O00O ==O0OOO00O0O0O00OOO -1 :#line:66
+                        OOO00OOOOOO00OO0O =O000OOO00O0O000OO .equity .equityDate [OOO0O000000O0O00O -1 ]#line:67
+                        OOO0000000O000O00 =O000OOO00O0O000OO .equity .dailyEquityVal [OOO0O000000O0O00O -1 ]-OO0000OO00O000OOO #line:68
+                        O000OOO00O0O000OO .yearlyReturnTuple +=((OOO00OOOOOO00OO0O ,OOO0000000O000O00 ),)#line:69
+                        OO0000OO00O000OOO =O000OOO00O0O000OO .equity .dailyEquityVal [OOO0O000000O0O00O -1 ]#line:70
+                if OOO0O000000O0O00O ==O0OOO00O0O0O00OOO -1 :#line:71
+                    O000OOO00O0O000OO .monthlyReturnTuple +=((O000OOO00O0O000OO .equity .equityDate [OOO0O000000O0O00O ],O000OOO00O0O000OO .equity .dailyEquityVal [OOO0O000000O0O00O ]-O000000O0OO000O0O ),)#line:72
+            O00OO0OOOOO00OOO0 =O000OOO00O0O000OO .equity .dailyEquityVal [OOO0O000000O0O00O ]#line:73
+            O0000OO0OO00O0OOO =max (O0000OO0OO00O0OOO ,O00OO0OOOOO00OOO0 )#line:75
+            if O000O0OOO0OO000O0 :#line:76
+                O0O0O000000OO00O0 =O00OO0OOOOO00OOO0 #line:77
+            O000O0OOO0OO000O0 =False #line:78
+            O0O0O000000OO00O0 =max (O0O0O000000OO00O0 ,O00OO0OOOOO00OOO0 )#line:79
+            OOOOO0OO0OOOOO00O =max (OOOOO0OO0OOOOO00O ,O0O0O000000OO00O0 -O00OO0OOOOO00OOO0 )#line:80
+            if OOO0O000000O0O00O >0 and OOO00OO0O00OO00OO ==12 and O00OOOOO0O00OOOO0 ==1 :#line:81
+                O000OOO00O0O000OO .drawDownTuple +=((OO000O0O000OOOOO0 ,OOOOO0OO0OOOOO00O ),)#line:82
+                OOOOO0OO0OOOOO00O =0 #line:84
+                O000O0OOO0OO000O0 =True #line:85
+                OO000O0O000OOOOO0 +=1 #line:86
+            OOO0O000000O00OOO =max (OOO0O000000O00OOO ,O0000OO0OO00O0OOO -O00OO0OOOOO00OOO0 )#line:87
+            O000OOO00O0O000OO .maxxDD =OOO0O000000O00OOO #line:88
+        O0O0O00O0OOOO0O00 =len (O000OOO00O0O000OO .drawDownTuple )#line:89
+        O0000000O00OO0000 =([OOO000O0O0O00OO0O [1 ]for OOO000O0O0O00OO0O in O000OOO00O0O000OO .drawDownTuple ])#line:90
+        OOOOOO0O000O0000O =([O0O0OO00O0OOOOOO0 [1 ]for O0O0OO00O0OOOOOO0 in O000OOO00O0O000OO .monthlyReturnTuple ])#line:91
+        OOO000O00OOOOOO0O =([OOO00O0000OOO0OO0 [1 ]for OOO00O0000OOO0OO0 in O000OOO00O0O000OO .yearlyReturnTuple ])#line:92
+        OO0OO0OO0000000OO =0 #line:93
+        if len (O0000000O00OO0000 )!=0 :OO0OO0OO0000000OO =sum (O0000000O00OO0000 )/len (O0000000O00OO0000 )#line:94
+        O000OOO00O0O000OO .avgMaxDD =OO0OO0OO0000000OO #line:95
+        OO0OO0OO0000000OO =0 #line:96
+        if len (OOO000O00OOOOOO0O )!=0 :OO0OO0OO0000000OO =sum (OOO000O00OOOOOO0O )/len (OOO000O00OOOOOO0O )#line:97
+        O000OOO00O0O000OO .avgYearlyReturn =OO0OO0OO0000000OO #line:98
+        if len (OOO000O00OOOOOO0O )!=0 :OO0OO0OO0000000OO =sum (OOOOOO0O000O0000O )/len (OOOOOO0O000O0000O )#line:99
+        OO0O00O0OOOO000O0 =[O0O000OO000000O00 -OO0OO0OO0000000OO for O0O000OO000000O00 in OOOOOO0O000O0000O ]#line:100
+        O0O0OO0OOOO0OO0OO =[OOOO0OO0O000O0O0O **2 for OOOO0OO0O000O0O0O in OO0O00O0OOOO000O0 ]#line:101
+        OOO0O0OOO00O00O0O =sum (O0O0OO0OOOO0OO0OO )#line:102
+        OO0O0O00O00OO0OOO =0 #line:103
+        if len (OOO000O00OOOOOO0O )!=0 :OO0O0O00O00OO0OOO =OOO0O0OOO00O00O0O /(len (OOOOOO0O000O0000O )-1 )#line:104
+        O000000OO000OO000 =sqrt (OO0O0O00O00OO0OOO )#line:105
+        O000OOO00O0O000OO .avgMonthlyReturn =OO0OO0OO0000000OO #line:106
+        O000OOO00O0O000OO .avgMonthlyStdDev =O000000OO000OO000 #line:107
+        for OOO0O000000O0O00O in range (0 ,len (O000OOO00O0O000OO .tradesList )):#line:108
+            O0OO0OOO00000O0O0 +=O000OOO00O0O000OO .tradesList [OOO0O000000O0O00O ].tradeProfit #line:109
+            O000000OO0OOOO00O =max (O000000OO0OOOO00O ,O0OO0OOO00000O0O0 )#line:110
+            O000000O0OOO00OOO =max (O000000O0OOO00OOO ,O000000OO0OOOO00O -O0OO0OOO00000O0O0 )#line:111
+            O000OOO00O0O000OO .clsTrdDD =O000000O0OOO00OOO #line:112
+            if O000OOO00O0O000OO .tradesList [OOO0O000000O0O00O ].entryOrExit ==1 :#line:113
+                OO00OOO0O0O000OOO +=1 #line:114
+            if O000OOO00O0O000OO .tradesList [OOO0O000000O0O00O ].tradeProfit >0 :#line:115
+                O00000O0O00000OO0 +=O000OOO00O0O000OO .tradesList [OOO0O000000O0O00O ].tradeProfit #line:116
+                O0OOO0000O00O000O +=1 #line:117
+            if O000OOO00O0O000OO .tradesList [OOO0O000000O0O00O ].tradeProfit <0 :#line:118
+                OO0000OOOO0OOO000 +=O000OOO00O0O000OO .tradesList [OOO0O000000O0O00O ].tradeProfit #line:119
+                O0O0OO0OOO0OO000O +=1 #line:120
+        if O0OOO0000O00O000O !=0 :O000OOO00O0O000OO .avgWin =O00000O0O00000OO0 /O0OOO0000O00O000O #line:121
+        if O0O0OO0OOO0OO000O !=0 :O000OOO00O0O000OO .avgLoss =OO0000OOOO0OOO000 /O0O0OO0OOO0OO000O #line:122
+        if OO00OOO0O0O000OOO !=0 :O000OOO00O0O000OO .avgTrade =O00OO0OOOOO00OOO0 /OO00OOO0O0O000OOO #line:123
+        O000OOO00O0O000OO .numTrades =OO00OOO0O0O000OOO #line:124
+        O000OOO00O0O000OO .profitLoss =O00OO0OOOOO00OOO0 #line:125
+        if OO00OOO0O0O000OOO !=0 :O000OOO00O0O000OO .perWins =O0OOO0000O00O000O /OO00OOO0O0O000OOO #line:126
+        if len (OOO000O00OOOOOO0O )!=0 :O000OOO00O0O000OO .avgYearlyTrades =OO00OOO0O0O000OOO /(len (OOOOOO0O000O0000O )/12 )#line:127
